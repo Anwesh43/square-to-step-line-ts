@@ -110,6 +110,9 @@ class STSLNode {
             context.restore()
         }
         context.restore()
+        if (this.next) {
+            this.next.draw(context)
+        }
     }
 
     update(cb : Function) {
@@ -130,5 +133,27 @@ class STSLNode {
         }
         cb()
         return this
+    }
+}
+
+class SquareToStepLine {
+    dir : number = 1
+    root : STSLNode = new STSLNode(0)
+    curr : STSLNode = this.root
+    draw(context : CanvasRenderingContext2D) {
+        this.root.draw(context)
+    }
+
+    update(cb : Function) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir , () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb : Function) {
+        this.curr.startUpdating(cb)
     }
 }
